@@ -68,7 +68,7 @@ export function BottleScene({
       gl={{
         antialias: !mobile,
         toneMapping: THREE.ACESFilmicToneMapping,
-        toneMappingExposure: dark ? 1.15 : 1.0,
+        toneMappingExposure: dark ? 1.35 : 1.15,
         powerPreference: "high-performance",
       }}
       style={{ background: bg }}
@@ -76,16 +76,17 @@ export function BottleScene({
       <color attach="background" args={[bg]} />
       <fog attach="fog" args={[bg, 9, 20]} />
 
-      {/* Balanced three-point studio rig */}
+      {/* Balanced three-point studio rig — neutral key, gentle cool fill, warm rim */}
+      <ambientLight intensity={dark ? 0.35 : 0.55} color={dark ? "#c9dde6" : "#ffffff"} />
       <hemisphereLight
-        args={[dark ? "#9fd9e8" : "#ffffff", dark ? "#0b1418" : "#cdd9d6", dark ? 0.55 : 0.9]}
+        args={[dark ? "#dfeef5" : "#ffffff", dark ? "#0e1a20" : "#c8d3d0", dark ? 0.45 : 0.75]}
       />
       <directionalLight
         position={[5, 8, 4]}
-        intensity={dark ? 1.9 : 2.2}
+        intensity={dark ? 1.6 : 1.8}
         color="#ffffff"
         castShadow={!mobile}
-        shadow-mapSize={[512, 512]}
+        shadow-mapSize={[1024, 1024]}
         shadow-camera-near={0.5}
         shadow-camera-far={24}
         shadow-camera-left={-6}
@@ -93,18 +94,13 @@ export function BottleScene({
         shadow-camera-top={6}
         shadow-camera-bottom={-6}
         shadow-bias={-0.0012}
-        shadow-normalBias={0.02}
+        shadow-normalBias={0.03}
+        shadow-radius={6}
       />
-      {/* fill */}
-      <directionalLight position={[-6, 3.5, 3]} intensity={dark ? 0.65 : 0.8} color="#bfe5f2" />
-      {/* rim */}
-      <directionalLight position={[-2, 4, -6]} intensity={dark ? 1.1 : 0.7} color="#ffffff" />
-      <pointLight
-        position={[2.5, -0.5, 3]}
-        intensity={dark ? 0.5 : 0.3}
-        color="#81E6D9"
-        distance={12}
-      />
+      {/* soft cool fill from the opposite side */}
+      <directionalLight position={[-6, 3.5, 3]} intensity={dark ? 0.5 : 0.55} color="#d6ecf5" />
+      {/* warm rim from behind for separation */}
+      <directionalLight position={[-2, 4, -6]} intensity={dark ? 0.9 : 0.6} color="#ffe6c7" />
 
       {/* Env/ambience/shadows suspend silently; the model deliberately sits
           OUTSIDE any Suspense boundary here so its load bubbles up to
