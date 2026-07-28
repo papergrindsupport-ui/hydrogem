@@ -6,6 +6,7 @@ const BottleScene = lazy(() => import("./Scene").then((m) => ({ default: m.Bottl
 interface Props {
   kind: BottleKind;
   colorKey: BottleColorKey;
+  palette?: { hex: string; accent: string };
   crystalShape: CrystalShape;
   letter: string | null;
   dark: boolean;
@@ -64,14 +65,13 @@ export function LazyScene(props: Props) {
 
 function StageLoader() {
   return (
-    <div className="absolute inset-0 grid place-items-center bg-black">
+    <div className="absolute inset-0 grid place-items-center bg-background">
       <div className="flex flex-col items-center gap-4">
         <div className="hg-loader" />
-        <div className="text-[10px] uppercase tracking-[0.3em] text-white/60">
+        <div className="text-[10px] uppercase tracking-[0.3em] text-foreground/60">
           Preparing your bottle
         </div>
       </div>
     </div>
   );
 }
-

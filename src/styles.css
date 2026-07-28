@@ -64,7 +64,7 @@
   --sea-glass: oklch(0.87 0.08 180);
   --sun-glow: oklch(0.87 0.17 92);
   --deep-ocean: oklch(0.44 0.07 190);
-  --blush: #0D6E6A;
+  --blush: #0d6e6a;
 
   /* Light theme — mint mist inspired */
   --background: oklch(0.995 0.005 180);
@@ -116,7 +116,7 @@
 
   --stage: oklch(0 0 0);
   --stage-foreground: oklch(0.98 0.01 180);
-  --blush: #0D6E6A;
+  --blush: #0d6e6a;
 }
 
 @layer base {
@@ -210,26 +210,41 @@ button {
 .hg-loader {
   --r1: 154%;
   --r2: 68.5%;
+  --loader-color: var(--primary);
+  --loader-track: color-mix(in oklab, var(--color-foreground) 15%, transparent);
   width: 60px;
   aspect-ratio: 1;
   border-radius: 50%;
   background:
-    radial-gradient(var(--r1) var(--r2) at top, #0000 79.5%, #269af2 80%),
-    radial-gradient(var(--r1) var(--r2) at bottom, #269af2 79.5%, #0000 80%),
-    radial-gradient(var(--r1) var(--r2) at top, #0000 79.5%, #269af2 80%), #ccc;
+    radial-gradient(var(--r1) var(--r2) at top, #0000 79.5%, var(--loader-color) 80%),
+    radial-gradient(var(--r1) var(--r2) at bottom, var(--loader-color) 79.5%, #0000 80%),
+    radial-gradient(var(--r1) var(--r2) at top, #0000 79.5%, var(--loader-color) 80%),
+    var(--loader-track);
   background-size: 50.5% 220%;
-  background-position: -100% 0%, 0% 0%, 100% 0%;
+  background-position:
+    -100% 0%,
+    0% 0%,
+    100% 0%;
   background-repeat: no-repeat;
   animation: hg-l9 2s infinite linear;
 }
 @keyframes hg-l9 {
   33% {
-    background-position: 0% 33%, 100% 33%, 200% 33%;
+    background-position:
+      0% 33%,
+      100% 33%,
+      200% 33%;
   }
   66% {
-    background-position: -100% 66%, 0% 66%, 100% 66%;
+    background-position:
+      -100% 66%,
+      0% 66%,
+      100% 66%;
   }
   100% {
-    background-position: 0% 100%, 100% 100%, 200% 100%;
+    background-position:
+      0% 100%,
+      100% 100%,
+      200% 100%;
   }
 }

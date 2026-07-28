@@ -54,9 +54,9 @@ function Bubbles({ count, dark }: { count: number; dark: boolean }) {
   return (
     <instancedMesh ref={ref} args={[geom, undefined, count]} frustumCulled={false}>
       <meshStandardMaterial
-        color={dark ? "#bfeef0" : "#ffffff"}
+        color={dark ? "#7fc6ff" : "#a8dcff"}
         transparent
-        opacity={0.3}
+        opacity={0.42}
         roughness={0.15}
         metalness={0}
         depthWrite={false}
@@ -122,11 +122,11 @@ function MeltingIce({ count, dark }: { count: number; dark: boolean }) {
           }}
         >
           <meshStandardMaterial
-            color={dark ? "#dff6ff" : "#ffffff"}
+            color={dark ? "#6fb8ff" : "#9ecbff"}
             transparent
-            opacity={0.35}
+            opacity={0.48}
             roughness={0.18}
-            metalness={0}
+            metalness={0.05}
             depthWrite={false}
           />
         </mesh>

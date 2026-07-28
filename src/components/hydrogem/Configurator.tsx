@@ -14,28 +14,50 @@ import {
 import { KD, cartItemId, useCart } from "@/lib/cart";
 import { LazyScene } from "./LazyScene";
 import { LogoMarquee } from "./LogoMarquee";
-import {
-  Moon,
-  Sun,
-  ShoppingBag,
-  Check,
-  Trash2,
-  Minus,
-  Plus,
-  Heart,
-  Palette,
-} from "lucide-react";
+import { Moon, Sun, ShoppingBag, Check, Trash2, Minus, Plus, Heart, Palette } from "lucide-react";
 import hydrogemLogo from "/hydrogem.png";
+
+const CUSTOM_PRESETS = [
+  "#FF6B9D",
+  "#C084FC",
+  "#60A5FA",
+  "#34D399",
+  "#FBBF24",
+  "#F97316",
+  "#EF4444",
+  "#0EA5E9",
+  "#A855F7",
+  "#10B981",
+  "#FACC15",
+  "#111827",
+];
+
+function darkenHex(hex: string, amount = 0.35): string {
+  const h = hex.replace("#", "");
+  const n =
+    h.length === 3
+      ? h
+          .split("")
+          .map((c) => c + c)
+          .join("")
+      : h;
+  const r = Math.max(0, Math.round(parseInt(n.slice(0, 2), 16) * (1 - amount)));
+  const g = Math.max(0, Math.round(parseInt(n.slice(2, 4), 16) * (1 - amount)));
+  const b = Math.max(0, Math.round(parseInt(n.slice(4, 6), 16) * (1 - amount)));
+  return "#" + [r, g, b].map((v) => v.toString(16).padStart(2, "0")).join("");
+}
 
 export function Configurator() {
   const [kind, setKind] = useState<BottleKind>("tumbler");
   const [colorKey, setColorKey] = useState<BottleColorKey>("aqua-tide");
+  const [customHex, setCustomHex] = useState<string | null>(null);
+  const [customOpen, setCustomOpen] = useState(false);
   const [crystalShape, setCrystalShape] = useState<CrystalShape>("heart");
   const [size, setSize] = useState<BottleSize>("M");
   const [hasKeychain, setHasKeychain] = useState(true);
   const [letter, setLetter] = useState("M");
   const [dark, setDark] = useState(true);
-  const [themeKey, setThemeKey] = useState<BottleColorKey>("deep-ocean");
+  const [themeKey, setThemeKey] = useState<BottleColorKey>("aqua-tide");
   const [themeOpen, setThemeOpen] = useState(false);
 
   const cart = useCart();
@@ -52,7 +74,12 @@ export function Configurator() {
 
   const bottle = BOTTLES[kind];
   const currentLetter = hasKeychain ? letter : null;
-  const currentId = cartItemId(kind, colorKey, crystalShape, size, currentLetter);
+  const isCustom = colorKey === ("custom" as BottleColorKey) && !!customHex;
+  const palette = isCustom
+    ? { name: `Custom ${customHex}`, hex: customHex!, accent: darkenHex(customHex!, 0.4) }
+    : BOTTLE_COLORS[colorKey];
+  const effectiveColorKey = isCustom ? `custom-${customHex}` : colorKey;
+  const currentId = cartItemId(kind, effectiveColorKey, crystalShape, size, currentLetter);
   const inBag = cart.has(currentId);
   const bagItem = cart.items.find((i) => i.id === currentId);
 
@@ -65,8 +92,8 @@ export function Configurator() {
       id: currentId,
       kind,
       name: bottle.name,
-      colorKey,
-      colorName: BOTTLE_COLORS[colorKey].name,
+      colorKey: effectiveColorKey as BottleColorKey,
+      colorName: palette.name,
       crystalShape,
       size,
       letter: currentLetter,
@@ -81,11 +108,7 @@ export function Configurator() {
       <header className="sticky top-0 z-30 border-b border-border/60 bg-background/70 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
           <a href="/" className="flex items-center" aria-label="HydroGem home">
-            <img
-              src={hydrogemLogo}
-              alt="HydroGem"
-              className="h-12 w-auto object-contain sm:h-14"
-            />
+            <img src={hydrogemLogo} alt="HydroGem" className="h-12 w-auto object-contain sm:h-14" />
           </a>
           <div className="flex items-center gap-2">
             <div className="relative">
@@ -166,12 +189,11 @@ export function Configurator() {
             Design your dream bottle
           </div>
           <h1 className="mt-4 font-display text-4xl font-black tracking-tight sm:text-5xl md:text-6xl">
-            Hydrate in{" "}
-            <span className="italic text-[var(--blush)]">sparkle.</span>
+            Hydrate in <span className="italic text-[var(--blush)]">style.</span>
           </h1>
           <p className="mt-3 max-w-lg text-sm text-muted-foreground sm:text-base">
-            Pick your bottle, dust it in crystals, and add a cute letter charm.
-            Everything updates live in 3D 💖
+            Pick your bottle, dust it in crystals, and add a cute letter charm. Everything updates
+            live in 3D 💖
           </p>
         </div>
       </section>
@@ -183,6 +205,7 @@ export function Configurator() {
             <LazyScene
               kind={kind}
               colorKey={colorKey}
+              palette={{ hex: palette.hex, accent: palette.accent }}
               crystalShape={crystalShape}
               letter={currentLetter}
               dark={dark}
@@ -202,9 +225,7 @@ export function Configurator() {
             <span className="text-[10px] uppercase tracking-widest text-white/50 line-through">
               {KD(bottle.priceWas)}
             </span>
-            <span className="text-sm font-black text-[var(--blush)]">
-              {KD(bottle.price)}
-            </span>
+            <span className="text-sm font-black text-[var(--blush)]">{KD(bottle.price)}</span>
           </div>
         </div>
 
@@ -246,11 +267,13 @@ export function Configurator() {
             <div className="flex flex-wrap gap-3">
               {(Object.keys(BOTTLE_COLORS) as BottleColorKey[]).map((c) => {
                 const p = BOTTLE_COLORS[c];
-                const active = colorKey === c;
+                const active = !isCustom && colorKey === c;
                 return (
                   <button
                     key={c}
-                    onClick={() => setColorKey(c)}
+                    onClick={() => {
+                      setColorKey(c);
+                    }}
                     className={`relative h-11 w-11 rounded-full shadow-inner transition-transform hover:scale-110 ${
                       active ? "scale-110" : ""
                     }`}
@@ -266,10 +289,86 @@ export function Configurator() {
                   </button>
                 );
               })}
+              <div className="relative">
+                <button
+                  onClick={() => setCustomOpen((v) => !v)}
+                  className={`relative grid h-11 w-11 place-items-center rounded-full border-2 border-dashed transition-transform hover:scale-110 ${
+                    isCustom ? "scale-110 border-[var(--blush)]" : "border-border"
+                  }`}
+                  style={
+                    isCustom
+                      ? {
+                          background: `radial-gradient(circle at 30% 25%, color-mix(in oklab, ${palette.hex} 60%, white), ${palette.hex} 65%, ${palette.accent})`,
+                        }
+                      : undefined
+                  }
+                  aria-label="More colors"
+                  aria-expanded={customOpen}
+                  title="More colors"
+                >
+                  {!isCustom && <Plus className="h-4 w-4 text-muted-foreground" />}
+                  {isCustom && (
+                    <span className="pointer-events-none absolute -inset-1 rounded-full ring-2 ring-[var(--blush)]" />
+                  )}
+                </button>
+                {customOpen && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-40"
+                      onClick={() => setCustomOpen(false)}
+                      aria-hidden
+                    />
+                    <div className="absolute left-0 top-13 z-50 mt-2 w-64 rounded-2xl border border-border bg-card p-3 shadow-xl">
+                      <div className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                        More colors
+                      </div>
+                      <div className="grid grid-cols-6 gap-2">
+                        {CUSTOM_PRESETS.map((hex) => {
+                          const active = isCustom && customHex === hex;
+                          return (
+                            <button
+                              key={hex}
+                              onClick={() => {
+                                setCustomHex(hex);
+                                setColorKey("custom" as BottleColorKey);
+                              }}
+                              className={`relative h-7 w-7 rounded-full transition-transform hover:scale-110 ${
+                                active ? "scale-110" : ""
+                              }`}
+                              style={{
+                                background: `radial-gradient(circle at 30% 25%, color-mix(in oklab, ${hex} 60%, white), ${hex} 65%, ${darkenHex(hex, 0.35)})`,
+                              }}
+                              title={hex}
+                              aria-label={hex}
+                            >
+                              {active && (
+                                <span className="pointer-events-none absolute -inset-1 rounded-full ring-2 ring-[var(--blush)]" />
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                      <div className="mt-3 border-t border-border pt-3">
+                        <label className="flex items-center justify-between gap-2 text-xs font-medium">
+                          <span className="text-muted-foreground">Pick custom</span>
+                          <input
+                            type="color"
+                            value={customHex ?? "#2EC4B6"}
+                            onChange={(e) => {
+                              setCustomHex(e.target.value);
+                              setColorKey("custom" as BottleColorKey);
+                            }}
+                            className="h-8 w-14 cursor-pointer rounded-md border border-border bg-transparent p-0.5"
+                            aria-label="Custom color picker"
+                          />
+                        </label>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
-            <div className="mt-2 text-xs text-muted-foreground">
-              {BOTTLE_COLORS[colorKey].name}
-            </div>
+            <div className="mt-2 text-xs text-muted-foreground">{palette.name}</div>
           </ControlBlock>
 
           {/* Crystal shape — cute circles */}
@@ -282,9 +381,7 @@ export function Configurator() {
                     key={s.key}
                     onClick={() => setCrystalShape(s.key)}
                     className={`relative grid h-11 w-11 place-items-center rounded-full border-2 bg-gradient-to-br from-[var(--blush)]/15 to-[var(--aqua-tide)]/15 transition-transform hover:scale-110 ${
-                      active
-                        ? "scale-110 border-[var(--blush)]"
-                        : "border-transparent"
+                      active ? "scale-110 border-[var(--blush)]" : "border-transparent"
                     }`}
                     title={s.name}
                     aria-label={s.name}
@@ -422,7 +519,15 @@ export function Configurator() {
         </div>
         <LogoMarquee />
         <div className="mt-10 text-center text-xs text-muted-foreground">
-          © HydroGem — Sparkle. Sip. Slay. 💗
+          © HydroGem — Hydrate in style. 💗{" "}
+          <a
+            href="https://www.instagram.com/hydrogem.kw/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-foreground transition-colors"
+          >
+            @hydrogem.kw
+          </a>
         </div>
       </section>
     </div>

@@ -21,6 +21,7 @@ import {
 interface SceneProps {
   kind: BottleKind;
   colorKey: BottleColorKey;
+  palette?: { hex: string; accent: string };
   crystalShape: CrystalShape;
   letter: string | null;
   dark: boolean;
@@ -38,8 +39,15 @@ function useIsMobile() {
   return mobile;
 }
 
-export function BottleScene({ kind, colorKey, crystalShape, letter, dark }: SceneProps) {
-  const palette = BOTTLE_COLORS[colorKey];
+export function BottleScene({
+  kind,
+  colorKey,
+  palette: paletteOverride,
+  crystalShape,
+  letter,
+  dark,
+}: SceneProps) {
+  const palette = paletteOverride ?? BOTTLE_COLORS[colorKey];
   const bg = dark ? "#070b0e" : "#eef4f3";
   const mobile = useIsMobile();
 
@@ -108,9 +116,9 @@ export function BottleScene({ kind, colorKey, crystalShape, letter, dark }: Scen
         <mesh position={[0, -1.605, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow={!mobile}>
           <circleGeometry args={[7, 48]} />
           <meshStandardMaterial
-            color={dark ? "#0e161b" : "#e4ecea"}
-            roughness={0.95}
-            metalness={0}
+            color={dark ? "#0b1a24" : "#dbe8ef"}
+            roughness={0.9}
+            metalness={0.05}
           />
         </mesh>
 
@@ -146,7 +154,6 @@ export function BottleScene({ kind, colorKey, crystalShape, letter, dark }: Scen
           />
         )}
       </group>
-
 
       <AdaptiveDpr pixelated />
       <AdaptiveEvents />
