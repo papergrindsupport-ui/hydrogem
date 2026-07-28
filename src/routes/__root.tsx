@@ -81,6 +81,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Design your own crystal-studded HydroGem bottle in 3D. Choose the silhouette, color, crystal shape, and a personalized letter keychain.",
       },
       { name: "author", content: "HydroGem" },
+
       { property: "og:title", content: "HydroGem — Hydrate in Style" },
       {
         property: "og:description",
@@ -88,7 +89,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Design your own crystal-studded HydroGem bottle in 3D. Personalize the shape, color, crystals and letter keychain.",
       },
       { property: "og:type", content: "website" },
+      {
+        property: "og:image",
+        content: "/ogimage.png",
+      },
+
       { name: "twitter:card", content: "summary_large_image" },
+      {
+        name: "twitter:image",
+        content: "/ogimage.png",
+      },
     ],
     links: [
       {

@@ -6,8 +6,9 @@ import {
   AdaptiveDpr,
   AdaptiveEvents,
 } from "@react-three/drei";
-import { Suspense, useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import * as THREE from "three";
+import type { RootState } from "@react-three/fiber";
 import { Bottle, type BottleSurfaceInfo } from "./Bottle";
 import { Keychain } from "./Keychain";
 import { Ambience } from "./Ambience";
@@ -50,6 +51,29 @@ export function BottleScene({
   const palette = paletteOverride ?? BOTTLE_COLORS[colorKey];
   const bg = dark ? "#070b0e" : "#eef4f3";
   const mobile = useIsMobile();
+  const [visible, setVisible] = useState(
+    typeof document === "undefined" ? true : document.visibilityState !== "hidden",
+  );
+
+  useEffect(() => {
+    const on = () => setVisible(document.visibilityState !== "hidden");
+    document.addEventListener("visibilitychange", on);
+    return () => document.removeEventListener("visibilitychange", on);
+  }, []);
+
+  const handleCreated = useCallback((state: RootState) => {
+    const canvas = state.gl.domElement;
+    const onLost = (e: Event) => {
+      // Preventing default lets the browser restore the context instead of
+      // permanently killing it when the tab was backgrounded.
+      e.preventDefault();
+    };
+    const onRestored = () => {
+      state.invalidate();
+    };
+    canvas.addEventListener("webglcontextlost", onLost as EventListener, false);
+    canvas.addEventListener("webglcontextrestored", onRestored, false);
+  }, []);
 
   const [surface, setSurface] = useState<BottleSurfaceInfo>(() => ({
     topY: 3.0,
@@ -65,6 +89,8 @@ export function BottleScene({
       shadows={mobile ? false : "soft"}
       dpr={mobile ? [1, 1.2] : [1, 1.6]}
       camera={{ position: [4.5, 2.4, 4.5], fov: 40 }}
+      frameloop={visible ? "always" : "demand"}
+      onCreated={handleCreated}
       gl={{
         antialias: !mobile,
         toneMapping: THREE.ACESFilmicToneMapping,
