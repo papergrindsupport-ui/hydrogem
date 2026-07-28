@@ -52,7 +52,7 @@ export function Configurator() {
   const [colorKey, setColorKey] = useState<BottleColorKey>("aqua-tide");
   const [customHex, setCustomHex] = useState<string | null>(null);
   const [customOpen, setCustomOpen] = useState(false);
-  const [crystalShape, setCrystalShape] = useState<CrystalShape>("heart");
+  const [crystalShape, setCrystalShape] = useState<CrystalShape>("diamond");
   const [size, setSize] = useState<BottleSize>("M");
   const [hasKeychain, setHasKeychain] = useState(true);
   const [letter, setLetter] = useState("M");
