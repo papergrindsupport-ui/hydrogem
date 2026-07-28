@@ -1,0 +1,235 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* HydroGem brand palette
+ * Mint Mist  #F0FAF7
+ * Aqua Tide  #2EC4B6
+ * Sea Glass  #81E6D9
+ * Sun Glow   #FFD700
+ * Deep Ocean #0D6E6A
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-stage: var(--stage);
+  --color-stage-foreground: var(--stage-foreground);
+  --color-mint-mist: var(--mint-mist);
+  --color-aqua-tide: var(--aqua-tide);
+  --color-sea-glass: var(--sea-glass);
+  --color-sun-glow: var(--sun-glow);
+  --color-deep-ocean: var(--deep-ocean);
+  --color-blush: var(--blush);
+
+  --animate-marquee: marquee 32s linear infinite;
+  --animate-pop: pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --font-display: "Poppins", "Cairo", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Cairo", "Poppins", ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  --radius: 0.875rem;
+
+  --mint-mist: oklch(0.985 0.012 175);
+  --aqua-tide: oklch(0.72 0.13 190);
+  --sea-glass: oklch(0.87 0.08 180);
+  --sun-glow: oklch(0.87 0.17 92);
+  --deep-ocean: oklch(0.44 0.07 190);
+  --blush: #0D6E6A;
+
+  /* Light theme — mint mist inspired */
+  --background: oklch(0.995 0.005 180);
+  --foreground: oklch(0.2 0.03 200);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.2 0.03 200);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.2 0.03 200);
+  --primary: var(--aqua-tide);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.96 0.015 180);
+  --secondary-foreground: oklch(0.25 0.04 195);
+  --muted: oklch(0.96 0.015 180);
+  --muted-foreground: oklch(0.5 0.03 195);
+  --accent: var(--sea-glass);
+  --accent-foreground: oklch(0.25 0.05 195);
+  --destructive: oklch(0.58 0.24 27);
+  --destructive-foreground: oklch(0.99 0 0);
+  --border: oklch(0.9 0.02 190);
+  --input: oklch(0.92 0.015 190);
+  --ring: var(--aqua-tide);
+
+  /* Stage is always true black — the 3D scene backdrop */
+  --stage: oklch(0 0 0);
+  --stage-foreground: oklch(0.98 0.01 180);
+}
+
+.dark {
+  /* True black dark mode */
+  --background: oklch(0 0 0);
+  --foreground: oklch(0.97 0.01 180);
+  --card: oklch(0.13 0.01 200 / 0.7);
+  --card-foreground: oklch(0.97 0.01 180);
+  --popover: oklch(0.09 0.01 200);
+  --popover-foreground: oklch(0.97 0.01 180);
+  --primary: var(--aqua-tide);
+  --primary-foreground: oklch(0.06 0.01 200);
+  --secondary: oklch(0.15 0.015 195);
+  --secondary-foreground: oklch(0.97 0.01 180);
+  --muted: oklch(0.14 0.01 200);
+  --muted-foreground: oklch(0.7 0.02 190);
+  --accent: var(--deep-ocean);
+  --accent-foreground: oklch(0.97 0.01 180);
+  --destructive: oklch(0.65 0.22 25);
+  --destructive-foreground: oklch(0.99 0 0);
+  --border: oklch(1 0 0 / 0.09);
+  --input: oklch(1 0 0 / 0.12);
+  --ring: var(--aqua-tide);
+
+  --stage: oklch(0 0 0);
+  --stage-foreground: oklch(0.98 0.01 180);
+  --blush: #0D6E6A;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  .font-display {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
+}
+
+@utility glass-panel {
+  background: color-mix(in oklab, var(--color-card) 82%, transparent);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid var(--color-border);
+}
+
+@keyframes shine-sweep {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+button {
+  cursor: pointer !important;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.06);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none;
+  }
+}
+
+.hg-loader {
+  --r1: 154%;
+  --r2: 68.5%;
+  width: 60px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(var(--r1) var(--r2) at top, #0000 79.5%, #269af2 80%),
+    radial-gradient(var(--r1) var(--r2) at bottom, #269af2 79.5%, #0000 80%),
+    radial-gradient(var(--r1) var(--r2) at top, #0000 79.5%, #269af2 80%), #ccc;
+  background-size: 50.5% 220%;
+  background-position: -100% 0%, 0% 0%, 100% 0%;
+  background-repeat: no-repeat;
+  animation: hg-l9 2s infinite linear;
+}
+@keyframes hg-l9 {
+  33% {
+    background-position: 0% 33%, 100% 33%, 200% 33%;
+  }
+  66% {
+    background-position: -100% 66%, 0% 66%, 100% 66%;
+  }
+  100% {
+    background-position: 0% 100%, 100% 100%, 200% 100%;
+  }
+}
